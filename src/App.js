@@ -50,7 +50,7 @@ const App = () => {
   const updatePerson = () => {
     const personToEdit = persons.find((person) => person.name === newName);
     personsService
-      .edit(personToEdit.id, {
+      .edit(+personToEdit.id, {
         name: newName,
         number: newNumber,
       })
