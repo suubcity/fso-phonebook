@@ -45,9 +45,14 @@ const App = () => {
         name: newName,
         number: newNumber,
       })
-      .then((res) => {
-        setPersons(persons.concat(res.data));
+      .then((createdPerson) => {
+        setPersons(persons.concat(createdPerson.data));
         displayNotification(`${newName} was added to phone book.`);
+      })
+      .catch((error) => {
+        //end of logging
+
+        displayError(error.response.data.message);
       });
   };
 
@@ -217,4 +222,4 @@ const Error = ({ errorMessage }) => {
   return <div className="error">{errorMessage}</div>;
 };
 
-export default App
+export default App;

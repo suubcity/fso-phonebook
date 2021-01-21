@@ -6,6 +6,7 @@ const getAll = () => {
 };
 
 const create = (newObject) => {
+  console.log("persons create fired");
   return axios.post(baseUrl, newObject);
 };
 
@@ -14,7 +15,7 @@ const remove = (id) => {
 };
 
 const update = (id, updatedObject) => {
-  updatedObject.id = id;  
+  updatedObject.id = id;
   return axios.put(baseUrl, updatedObject);
 };
 
