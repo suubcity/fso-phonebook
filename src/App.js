@@ -1,13 +1,11 @@
 import React, { useState, useEffect, useDebugValue } from "react";
 import personsService from "./services/persons";
-
 const App = () => {
   const useStateWithLabel = (initialValue, name) => {
     const [value, setValue] = useState(initialValue);
     useDebugValue(`${name}: ${value}`);
     return [value, setValue];
   };
-
   //States
   const [persons, setPersons] = useStateWithLabel([], "persons");
   const [newName, setNewName] = useStateWithLabel("", "newName");
@@ -31,6 +29,12 @@ const App = () => {
     setNewNumber(e.target.value);
   };
 
+  const getAll = () => {
+    personsService.getAll().then((res) => {
+      setPersons(res.data);
+    });
+  };
+
   const personAlreadyExists = () => {
     return persons.find((person) => person.name === newName);
   };
@@ -47,28 +51,27 @@ const App = () => {
       });
   };
 
+  const findIdOfPerson = () => {
+    const foundPerson = persons.find((person) => {
+      return person.name === newName;
+    });
+    return foundPerson.id;
+  };
+
   const updatePerson = () => {
-    const personToEdit = persons.find((person) => person.name === newName);
-    personsService
-      .edit(+personToEdit.id, {
-        name: newName,
-        number: newNumber,
-      })
-      .then(() => displayNotification(`${newName}'s number was changed.`))
-      .catch(() =>
-        displayError(`${newName} was already deleted from phonebook`)
-      );
+    const updatedPerson = { name: newName, number: newNumber };
+    const id = findIdOfPerson();
+
+    personsService.update(id, updatedPerson).then((res) => {
+      //use res object to update person in array
+      // setPersons()
+      // persons.data.name
+    });
   };
 
   const clearInputs = () => {
     setNewName("");
     setNewNumber("");
-  };
-
-  const getAll = () => {
-    personsService.getAll().then((res) => {
-      setPersons(res.data);
-    });
   };
 
   const handleAdd = (e) => {
@@ -97,11 +100,6 @@ const App = () => {
     setNewSearch(e.target.value);
   };
 
-  const filterPersons = () => {
-    const regex = new RegExp(newSearch, "gi");
-    return persons.filter((person) => person.name.match(regex));
-  };
-
   const handleDelete = (e) => {
     const { name, id } = e.target.dataset;
     if (window.confirm(`Delete ${name}`)) {
@@ -111,6 +109,12 @@ const App = () => {
 
       getAll();
     }
+  };
+
+  const filterPersons = () => {
+    const regex = new RegExp(newSearch, "gi");
+
+    return persons.filter((person) => person.name.match(regex));
   };
 
   const displayPersons = () => {
@@ -213,4 +217,4 @@ const Error = ({ errorMessage }) => {
   return <div className="error">{errorMessage}</div>;
 };
 
-export default App;
+export default App
